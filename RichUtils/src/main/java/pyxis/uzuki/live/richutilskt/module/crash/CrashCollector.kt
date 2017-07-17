@@ -11,11 +11,9 @@ object CrashCollector {
         val pid = android.os.Process.myPid()
 
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (process in activityManager.runningAppProcesses) {
-            if (process.pid == pid && process.processName.equals(context.packageName, true)) {
-                //Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance(config))
-            }
-        }
+        activityManager.runningAppProcesses
+                .filter { it.pid == pid && it.processName.equals(context.packageName, true) }
+                .forEach { Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance(config)) }
     }
 
 }

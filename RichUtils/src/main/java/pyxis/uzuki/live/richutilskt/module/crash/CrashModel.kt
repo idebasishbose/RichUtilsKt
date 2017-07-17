@@ -19,7 +19,7 @@ data class CrashConfig(var displayDeviceInfo: Boolean, var logLevel: LogLevel, v
         private var displayDeviceInfo = true
         private var logLevel = LogLevel.MESSAGE
         private var timeFormat = "yyyy-MM-dd (E) a hh:mm:ss.SSS"
-        private var packageName = "pyxis.uzuki.live.richutilskt"
+        private var packageName = ""
         private var versionStr = "1.0.0(1)"
         private var logLocation: String = ""
         private var documentType = DocumentType.MARKDOWN
@@ -62,13 +62,16 @@ data class CrashConfig(var displayDeviceInfo: Boolean, var logLevel: LogLevel, v
         fun build(context: Context): CrashConfig {
             if (TextUtils.isEmpty(logLocation))
                 logLocation = context.getExternalFilesDir("crash").toString()
+            if (TextUtils.isEmpty(packageName))
+                packageName = context.packageName
+
 
             return CrashConfig(displayDeviceInfo, logLevel, timeFormat, versionStr, packageName, logLocation, documentType)
         }
     }
 }
 
-class CrashModel() {
+class CrashModel {
     var packageName: String = ""
     var versionStr: String = ""
     var modelStr: String = ""
