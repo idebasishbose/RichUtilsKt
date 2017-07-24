@@ -5,8 +5,7 @@ package pyxis.uzuki.live.richutilskt.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Fragment
-import android.app.FragmentManager
+
 import android.content.ContentValues
 import android.content.Context
 import android.content.ContextWrapper
@@ -15,17 +14,20 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentActivity
+import android.support.v4.app.FragmentManager
 import android.support.v4.content.ContextCompat
 import java.text.SimpleDateFormat
 import java.util.*
 
 class RPickMedia private constructor(private var context: Context) {
 
-    private fun getActivity(context: Context): Activity? {
+    private fun getActivity(context: Context): FragmentActivity? {
         var c = context
 
         while (c is ContextWrapper) {
-            if (c is Activity) {
+            if (c is FragmentActivity) {
                 return c
             }
             c = c.baseContext
@@ -71,12 +73,11 @@ class RPickMedia private constructor(private var context: Context) {
     @SuppressLint("ValidFragment")
     private fun requestPhotoPick(context: Context, pickType: Int, callback: (Int, String) -> Unit) {
 
-        val fm = getActivity(context)?.fragmentManager
+        val fm = getActivity(context)?.supportFragmentManager
         val fragment = ResultFragment(fm as FragmentManager, callback)
 
-        fm.beginTransaction().add(fragment, "FRAGMENT_TAG").commitAllowingStateLoss()
-        fm.executePendingTransactions()
-
+        fm.beginTransaction().add(fragment, "FRAGMENT_TAG").commitNowAllowingStateLoss()
+        //fm.executePendingTransactions()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
@@ -152,7 +153,7 @@ class RPickMedia private constructor(private var context: Context) {
                 callback?.invoke(PICK_FAILED, "")
             }
 
-            fm?.beginTransaction()?.remove(this)?.commitAllowingStateLoss()
+            fm?.beginTransaction()?.remove(this)?.commitNowAllowingStateLoss()
 
         }
 
@@ -184,7 +185,7 @@ class RPickMedia private constructor(private var context: Context) {
                     }
             }
 
-            fm?.beginTransaction()?.remove(this)?.commit()
+            fm?.beginTransaction()?.remove(this)?.commitNowAllowingStateLoss()
 
         }
 
